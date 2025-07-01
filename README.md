@@ -24,6 +24,7 @@ cd qr-logo
 python -m venv .venv
 source .venv/bin/activate  # su Windows: .venv\\Scripts\\activate
 pip install -r requirements.txt
+python.exe -m pip install --upgrade pip
 ```
 
 ## Utilizzo base
