@@ -50,22 +50,29 @@ def normalize_color(col: str) -> Optional[str]:
 
 def ensure_path_with_suffix(p: str, suffix: str, default_stem: str = "qr_logo") -> str:
     """
-    Restituisce un percorso che termina con l'estensione `suffix`.
+    Restituisce un percorso che termina con `suffix` senza perdere caratteri del nome.
     - Se `p` è una cartella o termina con '/' o '\\', usa `default_stem` come nome file.
-    - Se `p` non ha estensione, aggiunge `suffix`.
-    - Se `p` ha un'altra estensione, la sostituisce con `suffix`.
+    - Se `p` ha già l'estensione desiderata, la mantiene.
+    - Se `p` ha un'estensione *nota* (immagini, svg), la sostituisce con `suffix`.
+    - Altrimenti NON considera 'estensione' ciò che segue l'ultimo punto e APPENDE `suffix`.
     """
     path = Path(p)
 
-    # Caso: path passato come directory (es. "output/" o "output\\")
     if str(p).endswith(("/", "\\")) or path.name == "":
         path = path / default_stem
 
-    # Aggiunge o sostituisce l'estensione
-    if path.suffix.lower() != suffix.lower():
-        path = path.with_suffix(suffix)
+    desired = suffix.lower()
+    known_exts = {".png", ".svg", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tiff"}
 
-    return str(path)
+    cur = path.suffix.lower()
+
+    if cur == desired:
+        return str(path)
+
+    if cur in known_exts:
+        return str(path.with_suffix(desired))
+
+    return str(Path(str(path) + desired))
 
 
 # ---------------------------------------------------------------------------
